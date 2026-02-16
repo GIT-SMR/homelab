@@ -1,0 +1,21 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - /opt/data/uptime-kuma:/app/data
+    networks:
+      - edge
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=edge
+      - traefik.http.routers.uptime.rule=Host(`kuma.local`)
+      #- traefik.http.routers.uptime.entrypoints=web # only web, no websecure
+      - traefik.http.routers.uptime.tls=true # disable TLS for this router
+      - traefik.http.routers.uptime.entrypoints=websecure # disable websecure entrypoint
+      - traefik.http.services.uptime.loadbalancer.server.port=3001
+
+networks:
+  edge:
+    external: true

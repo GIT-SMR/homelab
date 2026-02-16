@@ -1,0 +1,50 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    network_mode: host # enable this if you want Home Assistant to use host networking
+    #networks:
+    #  - edge
+    #user: "1000:1000"
+    restart: unless-stopped
+    volumes:
+      - /opt/data/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Lisbon
+      - PUID=1000
+      - PGID=1000
+    # Optional Traefik labels to expose HA via https://ha.local
+    #labels:
+    #  - traefik.enable=true
+    #  - traefik.docker.network=edge
+    #  - traefik.http.routers.homeassistant.rule=Host(`ha.local`)
+    #  - traefik.http.routers.homeassistant.entrypoints=websecure
+    #  - traefik.http.routers.homeassistant.tls=true
+    #  - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+
+  esphome:
+    image: esphome/esphome:latest
+    container_name: esphome
+    restart: unless-stopped
+    ports:
+      - "6052:6052"
+    volumes:
+      - /opt/data/esphome:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Lisbon
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=edge
+      - traefik.http.routers.esphome.rule=Host(`esphome.local`)
+      #- traefik.http.routers.esphome.entrypoints=web # only web, no websecure
+      - traefik.http.routers.esphome.tls=true # disable TLS for this router
+      - traefik.http.routers.esphome.entrypoints=websecure # disable websecure entrypoint
+      - traefik.http.services.esphome.loadbalancer.server.port=6052
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true

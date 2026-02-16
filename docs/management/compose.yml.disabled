@@ -1,0 +1,17 @@
+services:
+
+  cockpit:
+    image: ghcr.io/cockpit-project/cockpit:latest
+    container_name: cockpit-proxy
+    restart: unless-stopped
+    network_mode: host
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.cockpit.rule=Host(`cockpit.local`)
+      - traefik.http.routers.cockpit.entrypoints=websecure
+      - traefik.http.routers.cockpit.tls=true
+      - traefik.http.services.cockpit.loadbalancer.server.port=9090
+
+networks:
+  edge:
+    external: true
