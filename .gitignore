@@ -1,0 +1,17 @@
+# env/secrets
+**/.env
+**/*.env
+**/*secret*
+**/*.key
+**/*.pem
+**/*.crt
+**/acme.json
+
+# app data (never version)
+**/data/**
+**/.storage/**
+**/config/.storage/**
+
+# OS/editor noise
+.DS_Store
+*.swp
