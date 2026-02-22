@@ -12,9 +12,68 @@ services:
       - traefik.docker.network=edge
       - traefik.http.routers.uptime.rule=Host(`kuma.local`)
       #- traefik.http.routers.uptime.entrypoints=web # only web, no websecure
-      - traefik.http.routers.uptime.tls=true # disable TLS for this router
-      - traefik.http.routers.uptime.entrypoints=websecure # disable websecure entrypoint
+      - traefik.http.routers.uptime.tls=true # enables TLS for this router
+      - traefik.http.routers.uptime.entrypoints=websecure # enables websecure entrypoint
       - traefik.http.services.uptime.loadbalancer.server.port=3001
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/data/prometheus:/prometheus
+    networks:
+      - edge
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=edge
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.local`)
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.tls=true
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.local/
+    volumes:
+      - /opt/data/grafana:/var/lib/grafana
+    networks:
+      - edge
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=edge
+      - traefik.http.routers.grafana.rule=Host(`grafana.local`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - edge
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    networks:
+      - edge
 
 networks:
   edge:
