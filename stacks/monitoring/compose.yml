@@ -25,6 +25,11 @@ services:
       - /opt/data/prometheus:/prometheus
     networks:
       - edge
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge

@@ -41,6 +41,31 @@ mkdir -p "${REPO_DIR}" "${STACKS_DIR}" "${DATA_DIR}"
 chown -R "${SUDO_USER:-root}:${SUDO_USER:-root}" "${REPO_DIR}" || true
 chown -R "${SUDO_USER:-root}:${SUDO_USER:-root}" "${STACKS_DIR}" || true
 
+# Pre-create common data folders so first boot doesn't fail on permissions
+echo "==> Preparing /opt/data folders and permissions"
+mkdir -p \
+  "${DATA_DIR}/traefik" \
+  "${DATA_DIR}/uptime-kuma" \
+  "${DATA_DIR}/prometheus" \
+  "${DATA_DIR}/grafana" \
+  "${DATA_DIR}/homeassistant" \
+  "${DATA_DIR}/esphome" \
+  "${DATA_DIR}/duplicati"
+
+# Prometheus runs as an unprivileged user in the official image and must write to /prometheus
+chown -R 65534:65534 "${DATA_DIR}/prometheus" || true
+
+# Grafana official image runs as UID 472 and must write to /var/lib/grafana
+chown -R 472:472 "${DATA_DIR}/grafana" || true
+
+# Most linuxserver.io images use PUID/PGID; align the rest to the invoking sudo user
+chown -R "${SUDO_USER:-root}:${SUDO_USER:-root}" \
+  "${DATA_DIR}/traefik" \
+  "${DATA_DIR}/uptime-kuma" \
+  "${DATA_DIR}/homeassistant" \
+  "${DATA_DIR}/esphome" \
+  "${DATA_DIR}/duplicati" || true
+
 echo "==> Ensuring shared Docker network 'edge' exists"
 docker network inspect edge >/dev/null 2>&1 || docker network create edge
 
