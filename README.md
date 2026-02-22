@@ -1,58 +1,76 @@
-# Homelab Infrastructure (Docker + Traefik + GitOps-lite)
+# Homelab Infrastructure (Production‑style Docker + Traefik + GitOps)
 
-Production-style homelab running on Ubuntu Server using Docker, Traefik, and Git as the source of truth.
+Production‑grade homelab running on Ubuntu Server using Docker, Traefik, and Git as the single source of truth.
+
+This repository allows full infrastructure rebuild from scratch in minutes.
 
 ---
 
-# Overview
-
-This repository contains all Docker Compose stacks and scripts required to rebuild the entire homelab from scratch.
-
-Key principles:
+## Core Principles
 
 - Git is the source of truth
-- Immutable infrastructure mindset
-- Reproducible deployments
-- Secure reverse proxy via Traefik
-- Automated backup to Synology NAS
+- Reproducible infrastructure
 - Minimal host configuration
+- Persistent data separation
+- Reverse proxy‑based access control
+- Automated backup and recovery
 
 ---
 
-# Host Information
+## Host Environment
 
-OS: Ubuntu 24.04 LTS  
-Container Runtime: Docker Engine  
-Reverse Proxy: Traefik  
-Management: Portainer, Cockpit  
-Backup: Duplicati → Synology NAS  
-Monitoring: Uptime Kuma  
-Automation: Home Assistant + ESPHome  
+Server:
+
+- OS: Ubuntu Server 24.04 LTS
+- Runtime: Docker Engine
+- Hardware: Intel Core2 Duo, 3.7GB RAM
+
+Core Components:
+
+- Reverse Proxy: Traefik
+- Container Management: Portainer
+- Host Management: Cockpit
+- Log Monitoring: Dozzle
+
+Automation:
+
+- Home Assistant
+- ESPHome
+
+Monitoring:
+
+- Prometheus
+- Grafana
+- Uptime Kuma
+
+Backup:
+
+- Duplicati
+- Synology NAS (mounted at /mnt/nas/backup)
 
 ---
 
-# Directory Structure
-
-Repository:
+## Repository Structure
 
 ```
 /opt/stacks-repo
 ├── README.md
 ├── scripts/
+│   ├── bootstrap.sh
 │   └── docker-update.sh
-├── docs/
-│   └── management/
 ├── stacks/
 │   ├── infra/
 │   ├── home/
 │   ├── monitoring/
 │   └── backup/
+└── docs/
 ```
 
-Runtime:
+Runtime symlinks:
 
 ```
-/opt/stacks → symlinks to stacks inside repo
+/opt/stacks → /opt/stacks-repo/stacks
+/opt/scripts → /opt/stacks-repo/scripts
 ```
 
 Persistent data:
@@ -63,15 +81,15 @@ Persistent data:
 
 ---
 
-# Docker Network
+## Docker Network
 
-All services connect to shared network:
+All services connect to shared reverse proxy network:
 
 ```
 edge
 ```
 
-Create if missing:
+Create manually if starting fresh:
 
 ```bash
 docker network create edge
@@ -79,13 +97,19 @@ docker network create edge
 
 ---
 
-# Deployment
+## Deployment
 
-Update and deploy all stacks:
+Recommended deployment method:
 
 ```bash
 /opt/scripts/docker-update.sh
 ```
+
+This will:
+
+- Pull latest images
+- Restart changed containers
+- Leave unchanged containers running
 
 Manual deployment:
 
@@ -97,28 +121,48 @@ docker compose up -d
 
 ---
 
-# Backup Strategy
+## Bootstrap (Fresh Server Setup)
+
+Fully rebuild server:
+
+```bash
+sudo /opt/stacks-repo/scripts/bootstrap.sh
+```
+
+This script will:
+
+- Install Docker
+- Create required folders
+- Fix permissions
+- Create Docker network
+- Deploy all stacks
+
+---
+
+## Backup Strategy
 
 Backup tool: Duplicati
 
-Backs up:
+Backed up data:
 
 ```
-/opt/data/
-/opt/stacks-repo/
+/opt/data
+/opt/stacks-repo
 ```
 
 Destination:
 
 ```
-Synology NAS mounted at /mnt/nas/backup
+/mnt/nas/backup
 ```
+
+This enables full disaster recovery.
 
 ---
 
-# Restore Procedure
+## Restore Procedure
 
-Fresh server restore:
+On new server:
 
 Install Docker:
 
@@ -135,12 +179,8 @@ git clone git@github.com:GIT-SMR/homelab.git /opt/stacks-repo
 Create symlinks:
 
 ```bash
-mkdir -p /opt/stacks
-
-ln -s /opt/stacks-repo/stacks/infra /opt/stacks/infra
-ln -s /opt/stacks-repo/stacks/home /opt/stacks/home
-ln -s /opt/stacks-repo/stacks/monitoring /opt/stacks/monitoring
-ln -s /opt/stacks-repo/stacks/backup /opt/stacks/backup
+ln -s /opt/stacks-repo/stacks /opt/stacks
+ln -s /opt/stacks-repo/scripts /opt/scripts
 ```
 
 Create network:
@@ -157,14 +197,59 @@ Deploy:
 
 ---
 
-# Git Workflow
+## Monitoring Stack
+
+Prometheus:
+
+```
+https://prometheus.local
+```
+
+Grafana:
+
+```
+https://grafana.local
+```
+
+Uptime Kuma:
+
+```
+https://kuma.local
+```
+
+---
+
+## Management Interfaces
+
+Traefik Dashboard:
+
+```
+https://traefik.local
+```
+
+Portainer:
+
+```
+https://portainer.local
+```
+
+Cockpit:
+
+```
+https://server.local:9090
+```
+
+---
+
+## Git Workflow
 
 Make infrastructure changes:
 
 ```bash
 cd /opt/stacks-repo
+
 git add .
-git commit -m "Update infrastructure"
+git commit -m "Infrastructure update"
 git push
 ```
 
@@ -176,43 +261,31 @@ Deploy changes:
 
 ---
 
-# Security Model
+## Security Model
 
-- Reverse proxy controls access
-- Containers isolated via Docker networking
 - No direct container exposure
-- Persistent data stored outside containers
-- Git provides change tracking and rollback
+- Reverse proxy controlled access
+- TLS encryption via Traefik
+- Persistent volumes isolated
+- Git‑based audit trail
 
 ---
 
-# Services
+## Disaster Recovery
 
-Infrastructure:
-- Traefik
-- Portainer
-- Dozzle
+Full recovery requires only:
 
-Automation:
-- Home Assistant
-- ESPHome
+- Server
+- Docker
+- Git access
+- NAS backup
 
-Monitoring:
-- Uptime Kuma
-
-Backup:
-- Duplicati
+Recovery time: < 10 minutes
 
 ---
 
-# Future Improvements
+## Maintainer
 
-- Prometheus monitoring
-- Grafana dashboards
-- Automated health alerting
-- Automated rebuild script
-- Remote Git-based deployment
+Sérgio Ribeiro
 
----
-
-Maintainer: Sérgio Ribeiro
+Homelab Architecture: Docker + Traefik + GitOps‑lite
