@@ -36,7 +36,8 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=edge"
       - "traefik.http.routers.duplicati.rule=Host(`duplicati.home`)"
-      - "traefik.http.routers.duplicati.middlewares=secured@file"
+      #- "traefik.http.routers.duplicati.middlewares=secured@file" # optional, add if you have a middleware for authentication
+      - "traefik.http.routers.duplicati.middlewares=lan-only@file"
       #- "traefik.http.routers.duplicati.entrypoints=web" # only web, no websecure
       - "traefik.http.routers.duplicati.tls=true" # disable TLS for this router
       - "traefik.http.routers.duplicati.entrypoints=websecure" # disable websecure entrypoint
