@@ -14,11 +14,11 @@ services:
       - TZ=Europe/Lisbon
       - PUID=1000
       - PGID=1000
-    # Optional Traefik labels to expose HA via https://ha.local
+    # Optional Traefik labels to expose HA via https://ha.home
     #labels:
     #  - traefik.enable=true
     #  - traefik.docker.network=edge
-    #  - traefik.http.routers.homeassistant.rule=Host(`ha.local`)
+    #  - traefik.http.routers.homeassistant.rule=Host(`ha.home`)
     #  - traefik.http.routers.homeassistant.entrypoints=websecure
     #  - traefik.http.routers.homeassistant.tls=true
     #  - traefik.http.services.homeassistant.loadbalancer.server.port=8123
@@ -37,7 +37,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.esphome.rule=Host(`esphome.local`)
+      - traefik.http.routers.esphome.rule=Host(`esphome.home`)
+      - traefik.http.routers.esphome.middlewares=secured@file
       #- traefik.http.routers.esphome.entrypoints=web # only web, no websecure
       - traefik.http.routers.esphome.tls=true # disable TLS for this router
       - traefik.http.routers.esphome.entrypoints=websecure # disable websecure entrypoint

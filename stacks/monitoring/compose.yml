@@ -10,7 +10,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.uptime.rule=Host(`kuma.local`)
+      - traefik.http.routers.uptime.rule=Host(`kuma.home`)
+      - traefik.http.routers.uptime.middlewares=secured@file
       #- traefik.http.routers.uptime.entrypoints=web # only web, no websecure
       - traefik.http.routers.uptime.tls=true # enables TLS for this router
       - traefik.http.routers.uptime.entrypoints=websecure # enables websecure entrypoint
@@ -33,7 +34,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.prometheus.rule=Host(`prometheus.local`)
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.home`)
+      - traefik.http.routers.prometheus.middlewares=secured@file
       - traefik.http.routers.prometheus.entrypoints=websecure
       - traefik.http.routers.prometheus.tls=true
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
@@ -43,7 +45,7 @@ services:
     container_name: grafana
     restart: unless-stopped
     environment:
-      - GF_SERVER_ROOT_URL=https://grafana.local/
+      - GF_SERVER_ROOT_URL=https://grafana.home/
     volumes:
       - /opt/data/grafana:/var/lib/grafana
     networks:
@@ -51,7 +53,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.grafana.rule=Host(`grafana.local`)
+      - traefik.http.routers.grafana.rule=Host(`grafana.home`)
+      - traefik.http.routers.grafana.middlewares=secured@file
       - traefik.http.routers.grafana.entrypoints=websecure
       - traefik.http.routers.grafana.tls=true
       - traefik.http.services.grafana.loadbalancer.server.port=3000

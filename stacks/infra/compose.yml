@@ -11,7 +11,7 @@ services:
       - --providers.docker.network=edge
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --log.level=DEBUG
+      - --log.level=INFO
       - --accesslog=true
       - --ping.entrypoint=web
       # comment out these two lines to stop redirecting HTTP to HTTPS
@@ -23,12 +23,19 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /opt/data/traefik:/etc/traefik
+
+      # config from repo (immutable)
+      - /opt/stacks-repo/stacks/infra/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+
+      # cert material from data (stateful)
+      - /opt/data/traefik/cert.pem:/etc/traefik/cert.pem:ro
+      - /opt/data/traefik/key.pem:/etc/traefik/key.pem:ro
     networks:
       - edge
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`traefik.local`)
+      - traefik.http.routers.traefik.rule=Host(`traefik.home`)
+      - traefik.http.routers.traefik.middlewares=secured@file
       #- traefik.http.routers.traefik.entrypoints=web # only web, no websecure
       - "traefik.http.routers.traefik.entrypoints=websecure"  # listen on 443
       - "traefik.http.routers.traefik.tls=true"               # enable TLS
@@ -45,7 +52,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.dozzle.rule=Host(`dozzle.local`)
+      - traefik.http.routers.dozzle.rule=Host(`dozzle.home`)
+      - traefik.http.routers.dozzle.middlewares=secured@file
       #- traefik.http.routers.dozzle.entrypoints=web # only web, no websecure
       - traefik.http.routers.dozzle.tls=true  # disable TLS for this router
       - traefik.http.routers.dozzle.entrypoints=websecure # disable websecure entrypoint
@@ -57,14 +65,15 @@ services:
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /opt/data/portainer:/data
     networks:
       - edge
     labels:
       - traefik.enable=true
       - traefik.docker.network=edge
-      - traefik.http.routers.portainer.rule=Host(`portainer.local`)
+      - traefik.http.routers.portainer.rule=Host(`portainer.home`)
+      - traefik.http.routers.portainer.middlewares=secured@file
       - traefik.http.routers.portainer.entrypoints=websecure
       - traefik.http.routers.portainer.tls=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
