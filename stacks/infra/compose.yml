@@ -25,7 +25,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
       # config from repo (immutable)
-      - /opt/stacks-repo/stacks/infra/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - /opt/data/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
 
       # cert material from data (stateful)
       - /opt/data/traefik/cert.pem:/etc/traefik/cert.pem:ro
