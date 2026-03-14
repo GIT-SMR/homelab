@@ -52,7 +52,7 @@ Backup:
 
 ## Repository Structure
 
-```
+```text
 /opt/stacks-repo
 ├── README.md
 ├── scripts/
@@ -76,14 +76,14 @@ Backup:
 
 Runtime symlinks:
 
-```
+```text
 /opt/stacks → /opt/stacks-repo/stacks
 /opt/scripts → /opt/stacks-repo/scripts
 ```
 
 Persistent data:
 
-```
+```text
 /opt/data
 ```
 
@@ -93,7 +93,7 @@ Persistent data:
 
 All services connect to shared reverse proxy network:
 
-```
+```text
 edge
 ```
 
@@ -110,7 +110,7 @@ docker network create edge
 Recommended deployment method:
 
 ```bash
-/opt/scripts/docker-update.sh
+sudo /opt/scripts/docker-update.sh
 ```
 
 This script updates and redeploys all Docker stacks.
@@ -118,16 +118,15 @@ This script updates and redeploys all Docker stacks.
 For full system maintenance (host + containers):
 
 ```bash
-/opt/scripts/update/run-updates.sh
+sudo chmod +x /opt/scripts/update/run-updates.sh
+sudo /opt/scripts/update/run-updates.sh
 ```
 
-Manual deployment:
+Important:
 
-```bash
-cd /opt/stacks/infra
-docker compose pull
-docker compose up -d
-```
+- Do not run Bash scripts with `sh`.
+- `run-updates.sh` must be executed directly or with `bash`.
+- On a recovered host, ensure the script is executable before first use.
 
 ---
 
@@ -155,14 +154,14 @@ Backup tool: Duplicati
 
 Backed up data:
 
-```
+```text
 /opt/data
 /opt/stacks-repo
 ```
 
 Destination:
 
-```
+```text
 /mnt/nas/backup
 ```
 
@@ -189,8 +188,23 @@ git clone git@github.com:GIT-SMR/homelab.git /opt/stacks-repo
 Create symlinks:
 
 ```bash
-ln -s /opt/stacks-repo/stacks /opt/stacks
-ln -s /opt/stacks-repo/scripts /opt/scripts
+sudo ln -s /opt/stacks-repo/stacks /opt/stacks
+sudo ln -s /opt/stacks-repo/scripts /opt/scripts
+```
+
+Verify scripts path:
+
+```bash
+ls -l /opt/scripts
+ls -l /opt/scripts/update
+```
+
+Set required permissions:
+
+```bash
+sudo chmod +x /opt/scripts/bootstrap.sh
+sudo chmod +x /opt/scripts/docker-update.sh
+sudo chmod +x /opt/scripts/update/run-updates.sh
 ```
 
 Create network:
@@ -199,11 +213,31 @@ Create network:
 docker network create edge
 ```
 
-Deploy:
+Deploy Docker stacks:
 
 ```bash
-/opt/scripts/docker-update.sh
+sudo /opt/scripts/docker-update.sh
 ```
+
+Run full system maintenance:
+
+```bash
+sudo /opt/scripts/update/run-updates.sh
+```
+
+Important execution rule:
+
+```bash
+sudo /opt/scripts/update/run-updates.sh
+```
+
+Do not use:
+
+```bash
+sudo sh /opt/scripts/update/run-updates.sh
+```
+
+If executed with `sh`, the script may fail because `sh` does not support Bash options such as `set -o pipefail`.
 
 ---
 
@@ -211,20 +245,20 @@ Deploy:
 
 Prometheus:
 
-```
-https://prometheus.local
+```text
+https://prometheus.home
 ```
 
 Grafana:
 
-```
-https://grafana.local
+```text
+https://grafana.home
 ```
 
 Uptime Kuma:
 
-```
-https://kuma.local
+```text
+https://kuma.home
 ```
 
 ---
@@ -233,20 +267,20 @@ https://kuma.local
 
 Traefik Dashboard:
 
-```
-https://traefik.local
+```text
+https://traefik.home
 ```
 
 Portainer:
 
-```
-https://portainer.local
+```text
+https://portainer.home
 ```
 
 Cockpit:
 
-```
-https://server.local:9090
+```text
+https://server.home:9090
 ```
 
 ---
@@ -266,7 +300,7 @@ git push
 Deploy changes:
 
 ```bash
-/opt/scripts/docker-update.sh
+sudo /opt/scripts/docker-update.sh
 ```
 
 ---
@@ -278,10 +312,13 @@ System updates are modularized to keep operations simple and maintainable.
 Update workflow:
 
 ```bash
-/opt/scripts/update/run-updates.sh
+sudo chmod +x /opt/scripts/update/run-updates.sh
+sudo /opt/scripts/update/run-updates.sh
 ```
 
 This orchestrator executes sequential maintenance modules:
+
+Before first use on a rebuilt or recovered host, ensure the script is executable and run it directly with `sudo`.
 
 - Host OS updates (APT packages)
 - Docker image refresh and container recreation
@@ -301,8 +338,6 @@ Logs are written to:
 ```
 
 This modular design allows individual maintenance components to evolve independently while keeping the operational entrypoint simple.
-
----
 
 ---
 
