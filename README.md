@@ -57,7 +57,15 @@ Backup:
 ├── README.md
 ├── scripts/
 │   ├── bootstrap.sh
-│   └── docker-update.sh
+│   ├── docker-update.sh
+│   └── update/
+│       ├── run-updates.sh
+│       ├── lib/
+│       │   └── common.sh
+│       └── modules/
+│           ├── 10-host-update.sh
+│           ├── 20-docker-update.sh
+│           └── 30-cleanup.sh
 ├── stacks/
 │   ├── infra/
 │   ├── home/
@@ -105,11 +113,13 @@ Recommended deployment method:
 /opt/scripts/docker-update.sh
 ```
 
-This will:
+This script updates and redeploys all Docker stacks.
 
-- Pull latest images
-- Restart changed containers
-- Leave unchanged containers running
+For full system maintenance (host + containers):
+
+```bash
+/opt/scripts/update/run-updates.sh
+```
 
 Manual deployment:
 
@@ -258,6 +268,41 @@ Deploy changes:
 ```bash
 /opt/scripts/docker-update.sh
 ```
+
+---
+
+## System Maintenance
+
+System updates are modularized to keep operations simple and maintainable.
+
+Update workflow:
+
+```
+/opt/scripts/update/run-updates.sh
+```
+
+This orchestrator executes sequential maintenance modules:
+
+- Host OS updates (APT packages)
+- Docker image refresh and container recreation
+- Optional cleanup tasks
+
+Architecture:
+
+- `lib/common.sh` → shared logging and helper functions
+- `modules/10-host-update.sh` → operating system patching
+- `modules/20-docker-update.sh` → container updates
+- `modules/30-cleanup.sh` → maintenance cleanup
+
+Logs are written to:
+
+```
+/var/log/system_updates
+```
+
+This modular design allows individual maintenance components to evolve independently while keeping the operational entrypoint simple.
+
+---
 
 ---
 
