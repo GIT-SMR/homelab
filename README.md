@@ -277,7 +277,7 @@ System updates are modularized to keep operations simple and maintainable.
 
 Update workflow:
 
-```
+```bash
 /opt/scripts/update/run-updates.sh
 ```
 
@@ -296,7 +296,7 @@ Architecture:
 
 Logs are written to:
 
-```
+```bash
 /var/log/system_updates
 ```
 
