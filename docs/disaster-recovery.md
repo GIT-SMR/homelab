@@ -66,6 +66,7 @@ sudo bash bootstrap.sh git@github.com:GIT-SMR/homelab.git
 ```
 
 This will:
+
 - ensure `/opt/stacks-repo`, `/opt/stacks`, `/opt/data`
 - ensure Docker network `edge`
 - clone repo
@@ -101,6 +102,7 @@ docker compose -f /opt/stacks/infra/compose.yml up -d
 ### 4.1 Mount the NAS on the host
 
 Your desired mapping:
+
 - `//NAS/backup`  → `/mnt/nas/backup`  → `/backup` (inside Duplicati container)
 
 Create mount point:
@@ -121,9 +123,11 @@ sudo mount -t cifs //NAS/backup /mnt/nas/backup -o username=YOURUSER,vers=3.0
 ### 4.2 Restore using Duplicati
 
 1. Start Duplicati stack if not running:
+
    ```bash
    docker compose -f /opt/stacks/backup/compose.yml up -d
    ```
+
 2. Open Duplicati UI (via Traefik): `https://duplicati.local`
 3. Use **Restore**:
    - Source: `/backup` (your NAS mount inside container)
@@ -131,6 +135,7 @@ sudo mount -t cifs //NAS/backup /mnt/nas/backup -o username=YOURUSER,vers=3.0
    - Restore into `/restore` (temporary) or directly back into `/source/...` if you are confident
 
 Recommended restore targets:
+
 - `/opt/data/homeassistant`
 - `/opt/data/esphome`
 - `/opt/stacks-repo` (if you back it up too; usually Git is enough)
@@ -140,11 +145,13 @@ Recommended restore targets:
 ## 5) Validate services
 
 ### 5.1 Containers healthy
+
 ```bash
 docker ps
 ```
 
 ### 5.2 Core URLs
+
 - Traefik: `https://traefik.local`
 - Portainer: `https://portainer.local` (if configured)
 - Dozzle: `https://dozzle.local`
@@ -154,7 +161,9 @@ docker ps
 - Duplicati: `https://duplicati.local`
 
 ### 5.3 HomeKit bridge
+
 If you use HA → HomeKit, verify the bridge entities respond after restore. If not:
+
 - restart HA container
 - re-check HA HomeKit integration and pairing on iOS
 
@@ -163,15 +172,20 @@ If you use HA → HomeKit, verify the bridge entities respond after restore. If 
 ## 6) Rollback plan (if a change broke the system)
 
 1. Check Git history:
+
    ```bash
    cd /opt/stacks-repo
    git log --oneline --max-count=20
    ```
+
 2. Reset to a known good commit:
+
    ```bash
    git reset --hard <COMMIT>
    ```
+
 3. Redeploy:
+
    ```bash
    /opt/scripts/docker-update.sh
    ```
