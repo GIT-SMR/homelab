@@ -10,11 +10,14 @@ services:
       # required to access the UI on all interfaces; default is localhost
       - CLI_ARGS=--webservice-interface=0.0.0.0
       # required to start the container—make this a strong, non-empty passphrase
-      - SETTINGS_ENCRYPTION_KEY=yourStrongRandomPassword
+      - SETTINGS_ENCRYPTION_KEY=${DUPLICATI_SETTINGS_KEY?err}
       # IMPORTANT: allow access via hostname through reverse proxy
       - DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES=duplicati.home;10.10.10.5;localhost;*
       # password for the Duplicati web interface (default: admin)
-      - DUPLICATI__WEBSERVICE_PASSWORD=admin
+      - DUPLICATI__WEBSERVICE_PASSWORD=${DUPLICATI_UI_PASSWORD?err}
+    env_file:
+      - ./duplicati.env
+
 
     volumes:
       # config and database
