@@ -14,8 +14,6 @@ services:
       - DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES=duplicati.home;10.10.10.5;localhost;*
     env_file:
       - ./duplicati.env
-
-
     volumes:
       # config and database
       - /opt/data/duplicati/config:/config
@@ -23,7 +21,7 @@ services:
       - /opt/data/homeassistant:/source/homeassistant
       - /opt/data/esphome:/source/esphome
       - /opt/data/portainer:/source/portainer
-      - /opt/data/treafik:/source/traefik
+      - /opt/data/traefik:/source/traefik
       - /opt/data/uptime-kuma:/source/uptime-kuma
       - /opt/stacks:/source/stacks
       # mount your NAS (see below) to /backup in the container
