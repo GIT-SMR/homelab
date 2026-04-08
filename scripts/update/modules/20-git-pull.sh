@@ -4,7 +4,7 @@ set -Eeuo pipefail
 run_git_pull() {
     log "=== GIT PULL STARTED ==="
 
-    local repo_dir="${STACKS_REPO_DIR:-}"
+    local repo_dir="/opt/stacks-repo"
 
     if [[ -n "$repo_dir" ]]; then
         if [[ ! -d "$repo_dir/.git" ]]; then
