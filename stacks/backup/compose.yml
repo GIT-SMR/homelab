@@ -9,8 +9,6 @@ services:
       - TZ=Europe/Lisbon
       # required to access the UI on all interfaces; default is localhost
       - CLI_ARGS=--webservice-interface=0.0.0.0
-      - SETTINGS_ENCRYPTION_KEY        # value picked up from duplicati.env
-      - DUPLICATI__WEBSERVICE_PASSWORD # value picked up from duplicati.env
       - DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES=duplicati.home;10.10.10.5;localhost;*
     env_file:
       - ./duplicati.env
