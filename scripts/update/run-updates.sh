@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-BASE_DIR="/opt/scripts/update"
-#STACKS_REPO_DIR="${STACKS_REPO_DIR:-/opt/stacks-repo}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="${BASE_DIR:-$SCRIPT_DIR}"
+STACKS_REPO_DIR="${STACKS_REPO_DIR:-/opt/stacks-repo}"
+export STACKS_REPO_DIR
 export LOGFILE=""
 
 source "$BASE_DIR/lib/common.sh"

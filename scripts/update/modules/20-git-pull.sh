@@ -4,13 +4,14 @@ set -Eeuo pipefail
 run_git_pull() {
     log "=== GIT PULL STARTED ==="
 
-    local repo_dir="/opt/stacks-repo"
+    local repo_dir="${STACKS_REPO_DIR:-}"
 
-    if [[ -n "$repo_dir" ]]; then
-        if [[ ! -d "$repo_dir/.git" ]]; then
-            fail "Unable to run git pull: $repo_dir is not a git repository."
-        fi
-    else
+    if [[ -n "$repo_dir" && ! -d "$repo_dir/.git" ]]; then
+        log "Configured STACKS_REPO_DIR ($repo_dir) is not a git repository. Falling back to auto-detection."
+        repo_dir=""
+    fi
+
+    if [[ -z "$repo_dir" ]]; then
         if git -C "$PWD" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
             repo_dir="$(git -C "$PWD" rev-parse --show-toplevel)"
         else

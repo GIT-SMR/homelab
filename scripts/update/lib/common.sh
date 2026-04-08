@@ -27,7 +27,11 @@ run_cmd() {
     local description="$1"
     shift
     log "$description"
-    "$@" >>"$LOGFILE" 2>&1
+    if ! "$@" 2>&1 | tee -a "$LOGFILE"; then
+        local status=$?
+        log "Command failed with exit code $status: $*"
+        exit "$status"
+    fi
 }
 
 cleanup_old_logs() {
