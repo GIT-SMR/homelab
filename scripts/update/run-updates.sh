@@ -6,7 +6,7 @@ export LOGFILE=""
 
 source "$BASE_DIR/lib/common.sh"
 source "$BASE_DIR/modules/10-host-update.sh"
-source "$BASE_DIR/modules/30-git-pull.sh"
+source "$BASE_DIR/modules/20-git-pull.sh"
 source "$BASE_DIR/modules/30-docker-update.sh"
 source "$BASE_DIR/modules/40-cleanup.sh"
 
