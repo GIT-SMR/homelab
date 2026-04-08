@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 BASE_DIR="/opt/scripts/update"
+STACKS_REPO_DIR="${STACKS_REPO_DIR:-/opt/stacks-repo}"
 export LOGFILE=""
 
 source "$BASE_DIR/lib/common.sh"
