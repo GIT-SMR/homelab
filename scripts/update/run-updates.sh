@@ -6,8 +6,9 @@ export LOGFILE=""
 
 source "$BASE_DIR/lib/common.sh"
 source "$BASE_DIR/modules/10-host-update.sh"
-source "$BASE_DIR/modules/20-docker-update.sh"
-source "$BASE_DIR/modules/30-cleanup.sh"
+source "$BASE_DIR/modules/30-git-pull.sh"
+source "$BASE_DIR/modules/30-docker-update.sh"
+source "$BASE_DIR/modules/40-cleanup.sh"
 
 trap 'release_lock' EXIT
 
@@ -20,6 +21,7 @@ main() {
     log "===== SERVER UPDATE WORKFLOW STARTED ====="
 
     run_host_update
+    run_git_pull
     run_docker_update
     run_cleanup
 
