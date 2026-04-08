@@ -4,7 +4,9 @@ set -Eeuo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BASE_DIR="${BASE_DIR:-$SCRIPT_DIR}"
 STACKS_REPO_DIR="${STACKS_REPO_DIR:-/opt/stacks-repo}"
+STACKS_REPO_USER="${STACKS_REPO_USER:-${SUDO_USER:-root}}"
 export STACKS_REPO_DIR
+export STACKS_REPO_USER
 export LOGFILE=""
 
 source "$BASE_DIR/lib/common.sh"

@@ -19,8 +19,13 @@ run_git_pull() {
         fi
     fi
 
-    # Pull latest changes for the determined repository
-    run_cmd "Pulling latest changes in $repo_dir." git -C "$repo_dir" pull --ff-only
+    local git_args=(git -C "$repo_dir" pull --ff-only)
+
+    if [[ "${EUID}" -eq 0 && "${STACKS_REPO_USER:-root}" != "root" ]]; then
+        run_cmd "Pulling latest changes in $repo_dir as ${STACKS_REPO_USER}." sudo -H -u "$STACKS_REPO_USER" "${git_args[@]}"
+    else
+        run_cmd "Pulling latest changes in $repo_dir." "${git_args[@]}"
+    fi
 
     log "=== GIT PULL COMPLETED ==="
 }

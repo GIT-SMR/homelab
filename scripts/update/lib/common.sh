@@ -28,7 +28,7 @@ run_cmd() {
     shift
     log "$description"
     if ! "$@" 2>&1 | tee -a "$LOGFILE"; then
-        local status=$?
+        local status=${PIPESTATUS[0]:-$?}
         log "Command failed with exit code $status: $*"
         exit "$status"
     fi
