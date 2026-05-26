@@ -113,7 +113,7 @@ Recommended deployment method:
 sudo /opt/scripts/docker-update.sh
 ```
 
-This script updates and redeploys all Docker stacks.
+This script updates and redeploys only services that are already running.
 
 For full system maintenance (host + containers):
 
@@ -127,6 +127,30 @@ Important:
 - Do not run Bash scripts with `sh`.
 - `run-updates.sh` must be executed directly or with `bash`.
 - On a recovered host, ensure the script is executable before first use.
+
+---
+
+## Summer mode / low power mode
+
+The monitoring stack can be stopped during warmer months to reduce CPU and power usage. This turns off Prometheus, Grafana, cAdvisor, node-exporter, and Uptime Kuma without deleting the stack or changing the Compose files.
+
+Stop monitoring:
+
+```bash
+sudo /opt/scripts/summer-mode-monitoring-off.sh
+```
+
+Start monitoring again:
+
+```bash
+sudo /opt/scripts/monitoring-on.sh
+```
+
+`docker-update.sh` and `update/run-updates.sh` only update services that are already running. If the monitoring stack is stopped, update runs skip it instead of starting it again. To intentionally start all services in all stacks, run:
+
+```bash
+sudo /opt/scripts/docker-up.sh
+```
 
 ---
 
