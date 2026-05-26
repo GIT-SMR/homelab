@@ -105,6 +105,16 @@ docker network create edge
 
 ---
 
+## Internal Access
+
+Internal `.home` services exposed through Traefik are protected by the `lan-only@file` middleware, which restricts access to the local network / allowed client IPs.
+
+Extra Traefik Basic Auth has been removed from internal service routers to reduce repeated login prompts. Application-native authentication remains enabled where the application provides or requires it, such as Home Assistant, Portainer, Duplicati, and Grafana.
+
+This setup is only safe because these services are intended for internal access and must not be publicly exposed.
+
+---
+
 ## Deployment
 
 Recommended deployment method:

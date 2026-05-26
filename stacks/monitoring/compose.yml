@@ -11,7 +11,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.uptime.rule=Host(`kuma.home`)
-      - traefik.http.routers.uptime.middlewares=secured@file
+      - traefik.http.routers.uptime.middlewares=lan-only@file
       #- traefik.http.routers.uptime.entrypoints=web # only web, no websecure
       - traefik.http.routers.uptime.tls=true # enables TLS for this router
       - traefik.http.routers.uptime.entrypoints=websecure # enables websecure entrypoint
@@ -35,7 +35,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.prometheus.rule=Host(`prometheus.home`)
-      - traefik.http.routers.prometheus.middlewares=secured@file
+      - traefik.http.routers.prometheus.middlewares=lan-only@file
       - traefik.http.routers.prometheus.entrypoints=websecure
       - traefik.http.routers.prometheus.tls=true
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
@@ -54,7 +54,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.grafana.rule=Host(`grafana.home`)
-      - traefik.http.routers.grafana.middlewares=secured@file
+      - traefik.http.routers.grafana.middlewares=lan-only@file
       - traefik.http.routers.grafana.entrypoints=websecure
       - traefik.http.routers.grafana.tls=true
       - traefik.http.services.grafana.loadbalancer.server.port=3000

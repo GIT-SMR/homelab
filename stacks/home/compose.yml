@@ -38,7 +38,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.esphome.rule=Host(`esphome.home`)
-      - traefik.http.routers.esphome.middlewares=secured@file
+      - traefik.http.routers.esphome.middlewares=lan-only@file
       #- traefik.http.routers.esphome.entrypoints=web # only web, no websecure
       - traefik.http.routers.esphome.tls=true # disable TLS for this router
       - traefik.http.routers.esphome.entrypoints=websecure # disable websecure entrypoint

@@ -35,7 +35,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.traefik.rule=Host(`traefik.home`)
-      - traefik.http.routers.traefik.middlewares=secured@file
+      - traefik.http.routers.traefik.middlewares=lan-only@file
       #- traefik.http.routers.traefik.entrypoints=web # only web, no websecure
       - "traefik.http.routers.traefik.entrypoints=websecure"  # listen on 443
       - "traefik.http.routers.traefik.tls=true"               # enable TLS
@@ -53,7 +53,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.dozzle.rule=Host(`dozzle.home`)
-      - traefik.http.routers.dozzle.middlewares=secured@file
+      - traefik.http.routers.dozzle.middlewares=lan-only@file
       #- traefik.http.routers.dozzle.entrypoints=web # only web, no websecure
       - traefik.http.routers.dozzle.tls=true  # disable TLS for this router
       - traefik.http.routers.dozzle.entrypoints=websecure # disable websecure entrypoint
@@ -73,7 +73,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=edge
       - traefik.http.routers.portainer.rule=Host(`portainer.home`)
-      - traefik.http.routers.portainer.middlewares=secured@file
+      - traefik.http.routers.portainer.middlewares=lan-only@file
       - traefik.http.routers.portainer.entrypoints=websecure
       - traefik.http.routers.portainer.tls=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
